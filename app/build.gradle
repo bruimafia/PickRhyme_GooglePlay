@@ -1,0 +1,108 @@
+buildscript {
+    repositories {
+        maven { url 'https://plugins.gradle.org/m2/' }
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:0.12.5'
+    }
+}
+
+plugins {
+    id 'com.onesignal.androidsdk.onesignal-gradle-plugin'
+}
+
+repositories {
+    maven { url 'https://maven.google.com' }
+}
+
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.gms.google-services' // Google Services Gradle plugin
+apply plugin: 'com.google.firebase.crashlytics' // Crashlytics Gradle plugin
+
+android {
+    signingConfigs {
+        debug {
+            storeFile file('/Users/gukov/Desktop/keyGukov')
+            keyAlias 'BruimafiaApps'
+            storePassword 'BLMA1hAaI6hmsXe'
+            keyPassword 'BLMA1hAaI6hmsXe'
+        }
+        release {
+            storePassword 'BLMA1hAaI6hmsXe'
+            keyPassword 'BLMA1hAaI6hmsXe'
+            keyAlias 'BruimafiaApps'
+            storeFile file('/Users/gukov/Desktop/keyGukov')
+        }
+    }
+    compileSdkVersion 30
+    defaultConfig {
+        applicationId 'com.gukov.pickrhyme'
+        minSdkVersion 17
+        targetSdkVersion 30
+        versionCode 32
+        versionName "3.0.5"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
+        manifestPlaceholders = [
+                onesignal_app_id               : 'eb45375a-e215-4a4a-8115-0ce8ab1cb088',
+                onesignal_google_project_number: 'REMOTE'
+        ]
+        signingConfig signingConfigs.release
+        setProperty("archivesBaseName", "pickrhyme-$versionName-code$versionCode")
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    buildFeatures {
+        viewBinding = true
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.appcompat:appcompat:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0-rc01'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.browser:browser:1.3.0'
+    implementation 'androidx.vectordrawable:vectordrawable-animated:1.1.0'
+    implementation 'androidx.media:media:1.3.1'
+    implementation 'com.google.guava:guava:30.1.1-jre'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'com.android.support:multidex:1.0.3'
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test:runner:1.3.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    implementation 'com.onesignal:OneSignal:4.4.0' // OneSignal
+    implementation 'com.intuit.sdp:sdp-android:1.0.6' // SDP - a scalable size unit / аналог папок dimens
+    implementation 'com.yandex.android:mobmetricalib:3.21.1' // Библиотека Appmetrica SDK
+    implementation 'com.android.installreferrer:installreferrer:2.2' // Опционально. Библиотека Play Install Referrer
+    implementation 'com.github.GrenderG:Toasty:1.3.0' // Модернизированные всплывающие уведомления
+    implementation 'com.google.android:flexbox:1.1.0' // Флексбокс элементы
+    implementation 'com.anjlab.android.iab.v3:library:1.1.0' // In-App purchase. Внутриигровые покупки
+    implementation 'com.shobhitpuri.custombuttons:google-signin:1.1.0' // Google SignIn custom button
+    implementation 'com.google.android.gms:play-services-auth:19.0.0' // Google SignIn
+    implementation 'com.google.android.gms:play-services-games:21.0.0' // Google PlayGame
+    implementation 'com.google.android.gms:play-services-ads' // Firebase AdMob Google Mobile Ads SDK
+//    implementation 'com.google.android.gms:play-services-ads:20.2.0' // Google Mobile Ads SDK
+    implementation 'com.google.firebase:firebase-core:19.0.0' // Firebase SDK
+    implementation 'com.google.firebase:firebase-ads:20.2.0' // Firebase SDK
+    implementation platform('com.google.firebase:firebase-bom:28.0.1') // Import the BoM for the Firebase platform
+    implementation 'com.google.firebase:firebase-firestore' // Firebase Cloud Firestore
+    implementation 'com.google.firebase:firebase-messaging' // Firebase Cloud Messaging
+    implementation 'com.google.firebase:firebase-analytics' // Firebase Google Analytics
+    implementation 'com.google.firebase:firebase-crashlytics:18.0.1' // Firebase Crashlytics
+//    implementation 'com.google.firebase:firebase-crashlytics' // Firebase Crashlytics
+
+}
