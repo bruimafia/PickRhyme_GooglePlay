@@ -64,11 +64,9 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.android.support:multidex:1.0.3'
-
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test:runner:1.4.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
-
     implementation 'com.onesignal:OneSignal:4.4.0' // OneSignal
     implementation 'com.intuit.sdp:sdp-android:1.0.6' // SDP - a scalable size unit / аналог папок dimens
     implementation 'com.yandex.android:mobmetricalib:3.21.1' // Библиотека Appmetrica SDK
@@ -89,5 +87,4 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics' // Firebase Google Analytics
     implementation 'com.google.firebase:firebase-crashlytics:18.1.0' // Firebase Crashlytics
 //    implementation 'com.google.firebase:firebase-crashlytics' // Firebase Crashlytics
-
 }
