@@ -20,20 +20,6 @@ apply plugin: 'com.google.gms.google-services' // Google Services Gradle plugin
 apply plugin: 'com.google.firebase.crashlytics' // Crashlytics Gradle plugin
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('/Users/gukov/Desktop/keyGukov')
-            keyAlias 'BruimafiaApps'
-            storePassword 'BLMA1hAaI6hmsXe'
-            keyPassword 'BLMA1hAaI6hmsXe'
-        }
-        release {
-            storePassword 'BLMA1hAaI6hmsXe'
-            keyPassword 'BLMA1hAaI6hmsXe'
-            keyAlias 'BruimafiaApps'
-            storeFile file('/Users/gukov/Desktop/keyGukov')
-        }
-    }
     compileSdkVersion 30
     defaultConfig {
         applicationId 'com.gukov.pickrhyme'
@@ -48,7 +34,6 @@ android {
                 onesignal_app_id               : 'eb45375a-e215-4a4a-8115-0ce8ab1cb088',
                 onesignal_google_project_number: 'REMOTE'
         ]
-        signingConfig signingConfigs.release
         setProperty("archivesBaseName", "pickrhyme-$versionName-code$versionCode")
     }
     buildTypes {
@@ -69,7 +54,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'com.google.android.material:material:1.4.0-rc01'
+    implementation 'com.google.android.material:material:1.5.0-alpha01'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.browser:browser:1.3.0'
@@ -81,8 +66,8 @@ dependencies {
     implementation 'com.android.support:multidex:1.0.3'
 
     testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test:runner:1.3.0'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'androidx.test:runner:1.4.0'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation 'com.onesignal:OneSignal:4.4.0' // OneSignal
     implementation 'com.intuit.sdp:sdp-android:1.0.6' // SDP - a scalable size unit / аналог папок dimens
@@ -102,7 +87,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore' // Firebase Cloud Firestore
     implementation 'com.google.firebase:firebase-messaging' // Firebase Cloud Messaging
     implementation 'com.google.firebase:firebase-analytics' // Firebase Google Analytics
-    implementation 'com.google.firebase:firebase-crashlytics:18.0.1' // Firebase Crashlytics
+    implementation 'com.google.firebase:firebase-crashlytics:18.1.0' // Firebase Crashlytics
 //    implementation 'com.google.firebase:firebase-crashlytics' // Firebase Crashlytics
 
 }
