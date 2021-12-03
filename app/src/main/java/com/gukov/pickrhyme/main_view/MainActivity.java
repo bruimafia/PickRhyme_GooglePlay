@@ -107,8 +107,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
-        if (!googleAccountManager.getBillingProcessor().handleActivityResult(requestCode, resultCode, data))
-            super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             googleAccountManager.saveSignIn(data);
             firebaseManager.checkDataCloudFirestore();
@@ -231,7 +230,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void linkPrivacyPolicy() {
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://bruimafia.ru/privacy_policy/pickrhyme.html")));
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.privacy_policy_link))));
     }
 
     @Override

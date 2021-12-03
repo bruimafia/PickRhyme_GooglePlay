@@ -1,5 +1,8 @@
 package com.gukov.pickrhyme.object;
 
+import androidx.annotation.Keep;
+
+@Keep
 public class Word {
 
     private int id;

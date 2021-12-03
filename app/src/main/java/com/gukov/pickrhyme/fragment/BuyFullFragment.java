@@ -13,7 +13,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
-import com.anjlab.android.iab.v3.TransactionDetails;
+import com.anjlab.android.iab.v3.PurchaseInfo;
 import com.gukov.pickrhyme.R;
 import com.gukov.pickrhyme.databinding.FragmentBuyFullBinding;
 
@@ -49,13 +49,7 @@ public class BuyFullFragment extends DialogFragment implements BillingProcessor.
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!bp.handleActivityResult(requestCode, resultCode, data))
-            super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onProductPurchased(@NonNull String productId, TransactionDetails details) {
+    public void onProductPurchased(@NonNull String productId, PurchaseInfo details) {
         refreshFragment();
     }
 

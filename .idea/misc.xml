@@ -10,12 +10,14 @@
       <map>
         <entry key="app/src/main/res/layout/activity_game.xml" value="0.24537037037037038" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.24537037037037038" />
+        <entry key="app/src/main/res/layout/fragment_about.xml" value="0.3098958333333333" />
         <entry key="app/src/main/res/layout/fragment_all_rhymes.xml" value="0.24537037037037038" />
         <entry key="app/src/main/res/layout/fragment_help_by_pushkin.xml" value="0.24537037037037038" />
         <entry key="app/src/main/res/layout/word_in_spinner.xml" value="0.24537037037037038" />
       </map>
     </option>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="NullableNotNullManager">
     <option name="myDefaultNullable" value="org.jetbrains.annotations.Nullable" />
     <option name="myDefaultNotNull" value="androidx.annotation.NonNull" />

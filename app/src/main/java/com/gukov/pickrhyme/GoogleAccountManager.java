@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.anjlab.android.iab.v3.BillingProcessor;
-import com.anjlab.android.iab.v3.TransactionDetails;
+import com.anjlab.android.iab.v3.PurchaseInfo;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -152,7 +152,7 @@ public class GoogleAccountManager implements BillingProcessor.IBillingHandler {
     }
 
     @Override
-    public void onProductPurchased(String productId, TransactionDetails details) {
+    public void onProductPurchased(String productId, PurchaseInfo details) {
 
     }
 
