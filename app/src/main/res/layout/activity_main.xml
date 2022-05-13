@@ -154,20 +154,6 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/tv_upgrade"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/rounded_corner"
-                android:gravity="center"
-                android:padding="@dimen/_10sdp"
-                android:text="@string/upgrade_app"
-                android:textAllCaps="true"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_12sdp"
-                android:textStyle="bold"
-                android:visibility="gone" />
-
             <Button
                 android:id="@+id/btn_play"
                 style="@style/ButtonStyle"

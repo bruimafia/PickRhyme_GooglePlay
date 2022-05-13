@@ -1,6 +1,7 @@
 package com.gukov.pickrhyme.game_view;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.gukov.pickrhyme.FirebaseManager;
 import com.gukov.pickrhyme.R;
@@ -41,6 +42,8 @@ public class GamePresenter implements GameContract.Presenter {
         numberWordsForNextLevel = WORDS_IN_LEVEL - userWordsList.size();
         allWordsList = model.getRhymesFromDatabase(level);
         updateUI();
+        for (Word w : userWordsList)
+            Log.d("KKK", w.getWord());
     }
 
     @Override
@@ -58,7 +61,7 @@ public class GamePresenter implements GameContract.Presenter {
     private boolean inputTextIsRhyme(String word, String mode) {
         for (Word w : allWordsList) {
             if (w.getWord().equals(word)) {
-                if (!userWordsList.contains(w)) {
+                if (!isAdded(word)) {
                     userWordsList.add(w);
                     points += 1;
                     view.showToastSuccess(context.getString(R.string.good_rhyme));
@@ -71,6 +74,14 @@ public class GamePresenter implements GameContract.Presenter {
                 } else view.showToastWarning(context.getString(R.string.repeat_rhyme));
                 return true;
             }
+        }
+        return false;
+    }
+
+    private boolean isAdded(String word) {
+        for (Word w : userWordsList) {
+            if (w.getWord().equals(word))
+                return true;
         }
         return false;
     }

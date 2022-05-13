@@ -14,7 +14,6 @@ import java.util.List;
 public class MainPresenter implements MainContract.Presenter {
 
     private int level = 1, points = 0, hints = 2;
-    private boolean userIsPlayRating;
     private List<Word> userWordsList = new ArrayList<>(); // массив введенных пользователем рифм
 
     private Context context;
@@ -35,18 +34,12 @@ public class MainPresenter implements MainContract.Presenter {
         points = sPrefManager.getUserPoints();
         hints = sPrefManager.getUserHints();
         userWordsList = sPrefManager.getUserRhymes(level);
-        userIsPlayRating = sPrefManager.getPlayRating();
         updateUI();
     }
 
     @Override
     public void onSignInClicked() {
         view.onSignIn();
-    }
-
-    @Override
-    public void onUpgradeClicked() {
-        view.onUpgrade();
     }
 
     @Override
@@ -97,11 +90,6 @@ public class MainPresenter implements MainContract.Presenter {
     @Override
     public void linkPrivacyPolicyClicked() {
         view.linkPrivacyPolicy();
-    }
-
-    @Override
-    public void showPlayRating() {
-        view.showPlayRatingDialog();
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.gukov.pickrhyme.main_view;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
@@ -23,6 +24,12 @@ import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.UpdateAvailability;
+import com.google.android.play.core.tasks.Task;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.gukov.pickrhyme.BuildConfig;
 import com.gukov.pickrhyme.FirebaseManager;
@@ -71,15 +78,9 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         presenter.checkPurchased(googleAccountManager.isPurchased()); // обычная версия приложения, с рекламой
 //        presenter.checkPurchased(true); // полная версия приложения, не покупая его
 
-        // предложение оценить приложение
-        if (!sPrefManager.getPlayRating() && sPrefManager.getUserLevel() % 2 == 0)
-            presenter.showPlayRating();
-
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M)
-            checkUpgradeApp();
+        checkUpdateAvailability();
 
         binding.btnSignIn.setOnClickListener(v -> presenter.onSignInClicked());
-        binding.tvUpgrade.setOnClickListener(v -> presenter.onUpgradeClicked());
         binding.btnPlay.setOnClickListener(v -> presenter.onPlayGameClicked());
         binding.btnTraining.setOnClickListener(v -> presenter.onTrainingGameClicked());
         binding.btnLeaderboards.setOnClickListener(v -> presenter.openLeaderboardsClicked());
@@ -106,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == RC_SIGN_IN) {
             googleAccountManager.saveSignIn(data);
@@ -131,11 +132,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     }
 
     @Override
-    public void showUpgradeLink(boolean isUpgrade) {
-        binding.tvUpgrade.setVisibility(isUpgrade ? View.VISIBLE : View.GONE);
-    }
-
-    @Override
     public void showMessageBuyFullApp(boolean isPurchased) {
         binding.tvBuyFullApp.setVisibility(isPurchased ? View.GONE : View.VISIBLE);
     }
@@ -143,15 +139,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     public void onSignIn() {
         googleAccountManager.startSignInIntent();
-    }
-
-    @Override
-    public void onUpgrade() {
-        try {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + PACKAGE_NAME)));
-        } catch (android.content.ActivityNotFoundException anfe) {
-            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + PACKAGE_NAME)));
-        }
     }
 
     @Override
@@ -231,27 +218,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     @Override
     public void linkPrivacyPolicy() {
         startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.privacy_policy_link))));
-    }
-
-    @Override
-    public void showPlayRatingDialog() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(getString(R.string.few_seconds));
-        dialog.setMessage(getString(R.string.request_for_evaluation));
-        dialog.setView(getLayoutInflater().inflate(R.layout.rating, null));
-        dialog.setPositiveButton(getString(R.string.now), (d, which) -> {
-            // обновление информации об успешном оценивании и открытие приложения в Google Play
-            sPrefManager.setPlayRating(true);
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + getPackageName())));
-            } catch (ActivityNotFoundException anfe) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getPackageName())));
-            }
-            d.dismiss();
-        })
-                .setNegativeButton(getString(R.string.later), (d, id) -> d.cancel()); // перенос оценивания на потом
-        dialog.create();
-        dialog.show();
     }
 
     @Override
@@ -362,13 +328,23 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         super.onDestroy();
     }
 
-    private void checkUpgradeApp() {
-        FirebaseFirestore.getInstance().collection("upgrade")
-                .document("last_code_app")
-                .get()
-                .addOnSuccessListener(task -> {
-                    showUpgradeLink(BuildConfig.VERSION_CODE < (int) (long) task.get("code"));
-                })
-                .addOnFailureListener(e -> Log.d("FirebaseManager", e.getMessage()));
+    // проверка обновлений
+    private void checkUpdateAvailability() {
+        AppUpdateManager appUpdateManager = AppUpdateManagerFactory.create(this);
+        Task<AppUpdateInfo> appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
+        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                    && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+                try {
+                    appUpdateManager.startUpdateFlowForResult(
+                            appUpdateInfo,
+                            AppUpdateType.IMMEDIATE,
+                            this,
+                            8);
+                } catch (IntentSender.SendIntentException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 }

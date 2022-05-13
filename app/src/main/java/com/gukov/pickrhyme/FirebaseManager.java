@@ -20,7 +20,7 @@ public class FirebaseManager {
     private static final String COLLECTION_SUGGEST = "suggest_rhymes"; // имя коллекции  предложенных рифм в облаке firebase
     private static final String COLLECTION_UPGRADE = "upgrade"; // имя коллекции обновления в облаке firebase
     private static final String DOCUMENT_UPGRADE = "last_code_app"; // имя документа обновления в облаке firebase
-    private static final int COUNT_LEVEL = 100; // количество уровней
+    private static final int COUNT_LEVEL = 300; // количество уровней
 
     private FirebaseFirestore firestore;
     private SharedPreferencesManager sPrefManager;
