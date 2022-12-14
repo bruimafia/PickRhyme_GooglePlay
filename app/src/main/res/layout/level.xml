@@ -7,17 +7,17 @@
     android:background="@drawable/selector_row"
     android:orientation="horizontal"
     android:paddingStart="@dimen/_10sdp"
-    android:paddingTop="@dimen/_17sdp"
+    android:paddingTop="@dimen/_13sdp"
     android:paddingEnd="@dimen/_10sdp"
-    android:paddingBottom="@dimen/_17sdp">
+    android:paddingBottom="@dimen/_13sdp">
 
     <TextView
         android:id="@+id/tv_levelValue"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_17sdp"
+        android:layout_marginEnd="@dimen/_15sdp"
         android:textColor="@color/grey_600"
-        android:textSize="@dimen/_13sdp"
+        android:textSize="@dimen/_13ssp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,11 +30,21 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textColor="@color/grey_600"
-        android:textSize="@dimen/_13sdp"
+        android:textSize="@dimen/_13ssp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/btn_allRhymes"
         app:layout_constraintStart_toEndOf="@id/tv_levelValue"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="@tools:sample/full_names" />
+
+    <ImageView
+        android:id="@+id/btn_allRhymes"
+        android:layout_width="@dimen/_35sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:contentDescription="@string/other_rhymes"
+        android:src="@drawable/book"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

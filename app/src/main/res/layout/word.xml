@@ -11,5 +11,5 @@
     android:paddingEnd="@dimen/_15sdp"
     android:paddingBottom="@dimen/_5sdp"
     android:textColor="@color/grey_500"
-    android:textSize="@dimen/_12sdp"
+    android:textSize="@dimen/_12ssp"
     tools:text="@tools:sample/full_names" />

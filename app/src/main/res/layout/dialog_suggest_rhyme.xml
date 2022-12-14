@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bottom_sheet_background"
+    android:orientation="vertical"
+    tools:context=".dialog.SuggestRhymeDialog">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bottom_sheet_background_head"
+        android:gravity="center"
+        android:padding="@dimen/_13sdp"
+        android:text="@string/suggest_rhyme"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_16ssp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_18sdp"
+        android:layout_marginTop="@dimen/_18sdp"
+        android:layout_marginEnd="@dimen/_18sdp"
+        android:gravity="center"
+        android:text="@string/suggest_rhyme_details"
+        android:textSize="@dimen/_13ssp" />
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_25sdp"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_marginEnd="@dimen/_25sdp"
+        android:layout_marginBottom="@dimen/_15sdp"
+        android:background="@color/grey_200"
+        android:spinnerMode="dialog"
+        tools:entries="@array/cats" />
+
+    <androidx.appcompat.widget.AppCompatEditText
+        android:id="@+id/et_suggestRhyme"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/_25sdp"
+        android:layout_marginEnd="@dimen/_25sdp"
+        android:autofillHints="no"
+        android:ems="10"
+        android:hint="@string/input_your_rhyme"
+        android:inputType="textPersonName"
+        android:padding="@dimen/_10sdp"
+        app:backgroundTint="@color/colorAccent" />
+
+    <Button
+        android:id="@+id/btn_send"
+        style="@style/Widget.AppCompat.Button.Borderless"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_20sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_20sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:padding="@dimen/_13sdp"
+        android:text="@string/send"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/_16ssp"
+        android:textStyle="bold" />
+
+</LinearLayout>

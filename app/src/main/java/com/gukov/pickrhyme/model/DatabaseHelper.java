@@ -15,7 +15,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DB_NAME = "LevelsDB.db";
     private static String DB_PATH = "";
-    private static final int DB_VERSION = 9;
+    private static final int DB_VERSION = 11;
 
     private SQLiteDatabase mDataBase;
     private final Context mContext;
@@ -23,10 +23,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     public DatabaseHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
-        if (android.os.Build.VERSION.SDK_INT >= 17)
-            DB_PATH = context.getApplicationInfo().dataDir + "/databases/";
-        else
-            DB_PATH = "/data/data/" + context.getPackageName() + "/databases/";
+        DB_PATH = context.getApplicationInfo().dataDir + "/databases/";
         this.mContext = context;
 
         copyDataBase();

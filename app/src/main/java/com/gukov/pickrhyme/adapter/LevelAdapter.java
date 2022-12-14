@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,9 +19,14 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.LevelViewHol
 
     private Context context;
     private OnWordClickListener onWordClickListener;
+    private OnAllRhymesClickListener onAllRhymesClickListener;
     private List<Word> words;
 
     public interface OnWordClickListener {
+        void onWordClick(int position);
+    }
+
+    public interface OnAllRhymesClickListener {
         void onWordClick(int position);
     }
 
@@ -28,16 +34,26 @@ public class LevelAdapter extends RecyclerView.Adapter<LevelAdapter.LevelViewHol
         this.onWordClickListener = onWordClickListener;
     }
 
+    public void setOnAllRhymesClickListener(OnAllRhymesClickListener onAllRhymesClickListener) {
+        this.onAllRhymesClickListener = onAllRhymesClickListener;
+    }
+
     class LevelViewHolder extends RecyclerView.ViewHolder {
         private TextView text, level;
+        private ImageView allRhymes;
 
         LevelViewHolder(View itemView) {
             super(itemView);
             this.level = itemView.findViewById(R.id.tv_levelValue);
             this.text = itemView.findViewById(R.id.tv_word);
+            this.allRhymes = itemView.findViewById(R.id.btn_allRhymes);
             itemView.setOnClickListener(v -> {
                 if (onWordClickListener != null)
-                    onWordClickListener.onWordClick(getAdapterPosition());
+                    onWordClickListener.onWordClick(getBindingAdapterPosition());
+            });
+            allRhymes.setOnClickListener(v -> {
+                if (onAllRhymesClickListener != null)
+                    onAllRhymesClickListener.onWordClick(getBindingAdapterPosition());
             });
         }
     }

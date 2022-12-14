@@ -11,7 +11,7 @@
         android:id="@+id/cl_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorPrimary"
         android:paddingTop="@dimen/_12sdp"
         android:paddingBottom="@dimen/_8sdp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -94,7 +94,7 @@
                     android:text="@string/app_name"
                     android:textAllCaps="true"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/_28sdp"
+                    android:textSize="@dimen/_29ssp"
                     android:textStyle="bold" />
 
             </LinearLayout>
@@ -130,7 +130,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/_14sdp"
+            android:textSize="@dimen/_14ssp"
             android:textStyle="bold"
             tools:text="@string/welcome_player" />
 
@@ -180,7 +180,7 @@
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/get_hint_for_view_ads" />
+                android:text="@string/get_hint" />
 
             <Button
                 android:id="@+id/btn_suggestRhyme"
@@ -194,7 +194,7 @@
                 style="@style/ButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/reset_game" />
+                android:text="@string/reset_progress" />
 
             <Button
                 android:id="@+id/btn_signOut"
@@ -213,6 +213,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:paddingTop="@dimen/_3sdp"
+        android:paddingBottom="@dimen/_8sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -224,30 +225,19 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/_10sdp"
             android:gravity="center"
-            android:text="@string/buyFull"
+            android:text="@string/buy_full"
             android:textColor="@color/grey_500"
-            android:textSize="@dimen/_14sdp"
+            android:textSize="@dimen/_14ssp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/tv_about"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_5sdp"
             android:gravity="center"
             android:text="@string/about"
             android:textColor="@color/grey_400"
-            android:textSize="@dimen/_12sdp" />
-
-        <TextView
-            android:id="@+id/tv_privacyPolicy"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:gravity="center"
-            android:text="@string/privacy_policy"
-            android:textColor="@color/grey_400"
-            android:textSize="@dimen/_12sdp" />
+            android:textSize="@dimen/_13ssp" />
 
     </LinearLayout>
 

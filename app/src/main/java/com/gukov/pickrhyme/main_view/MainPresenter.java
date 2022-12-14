@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-import com.gukov.pickrhyme.SharedPreferencesManager;
+import com.gukov.pickrhyme.util.SharedPreferencesManager;
 import com.gukov.pickrhyme.model.ModelInterface;
 import com.gukov.pickrhyme.object.Word;
 
@@ -88,11 +88,6 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
-    public void linkPrivacyPolicyClicked() {
-        view.linkPrivacyPolicy();
-    }
-
-    @Override
     public void updateUI() {
         view.showLevelValue(String.valueOf(level));
         view.showPointsValue(String.valueOf(points));
@@ -102,7 +97,7 @@ public class MainPresenter implements MainContract.Presenter {
 
     @Override
     public void checkPurchased(boolean isPurchased) {
-        sPrefManager.setAppIsFullVersion(isPurchased);
+        sPrefManager.setIsFullVersion(isPurchased);
         view.showMessageBuyFullApp(isPurchased);
     }
 

@@ -3,9 +3,9 @@ package com.gukov.pickrhyme.game_view;
 import android.content.Context;
 import android.util.Log;
 
-import com.gukov.pickrhyme.FirebaseManager;
+import com.gukov.pickrhyme.util.FirebaseManager;
 import com.gukov.pickrhyme.R;
-import com.gukov.pickrhyme.SharedPreferencesManager;
+import com.gukov.pickrhyme.util.SharedPreferencesManager;
 import com.gukov.pickrhyme.model.ModelInterface;
 import com.gukov.pickrhyme.object.Word;
 
@@ -69,7 +69,7 @@ public class GamePresenter implements GameContract.Presenter {
                         numberWordsForNextLevel -= 1;
                         goToNextLevelIfNeed();
                     }
-                    if (!sPrefManager.getAppIsFullVersion() && mode.equals("training") && userWordsList.size() % 7 == 0)
+                    if (!sPrefManager.getIsFullVersion() && mode.equals("training") && userWordsList.size() % 7 == 0)
                         view.showAdsInterstitial();
                 } else view.showToastWarning(context.getString(R.string.repeat_rhyme));
                 return true;
@@ -93,11 +93,11 @@ public class GamePresenter implements GameContract.Presenter {
             firebaseManager.setDataCloudFirestore(level);
             level += 1;
             numberWordsForNextLevel = WORDS_IN_LEVEL;
-            if (sPrefManager.getAppIsFullVersion())
+            if (sPrefManager.getIsFullVersion())
                 hints += 2;
             userWordsList.clear();
             allWordsList = model.getRhymesFromDatabase(level);
-            if (!sPrefManager.getAppIsFullVersion())
+            if (!sPrefManager.getIsFullVersion())
                 view.showAdsInterstitial();
         }
     }
@@ -106,7 +106,7 @@ public class GamePresenter implements GameContract.Presenter {
     public void onHelpByPushkin() {
         if (hints > 0)
             hints--;
-        view.showHelpByPushkinAlertDialog(level);
+        view.showHelpByPushkinDialog(level);
     }
 
     @Override

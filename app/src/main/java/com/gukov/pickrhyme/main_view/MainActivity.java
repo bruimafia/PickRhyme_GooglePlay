@@ -1,14 +1,12 @@
 package com.gukov.pickrhyme.main_view;
 
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
@@ -17,12 +15,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.rewarded.RewardedAd;
-import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
@@ -30,19 +23,23 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.Task;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.gukov.pickrhyme.BuildConfig;
-import com.gukov.pickrhyme.FirebaseManager;
-import com.gukov.pickrhyme.GoogleAccountManager;
 import com.gukov.pickrhyme.R;
-import com.gukov.pickrhyme.SharedPreferencesManager;
 import com.gukov.pickrhyme.databinding.ActivityMainBinding;
-import com.gukov.pickrhyme.fragment.AboutFragment;
-import com.gukov.pickrhyme.fragment.BuyFullFragment;
-import com.gukov.pickrhyme.fragment.SuggestRhymeFragment;
+import com.gukov.pickrhyme.dialog.AboutDialog;
+import com.gukov.pickrhyme.dialog.BuyFullDialog;
+import com.gukov.pickrhyme.dialog.SuggestRhymeDialog;
 import com.gukov.pickrhyme.game_view.GameActivity;
 import com.gukov.pickrhyme.levels_view.LevelsActivity;
 import com.gukov.pickrhyme.model.Model;
+import com.gukov.pickrhyme.util.FirebaseManager;
+import com.gukov.pickrhyme.util.GoogleAccountManager;
+import com.gukov.pickrhyme.util.SharedPreferencesManager;
+import com.yandex.mobile.ads.common.AdRequest;
+import com.yandex.mobile.ads.common.AdRequestError;
+import com.yandex.mobile.ads.common.ImpressionData;
+import com.yandex.mobile.ads.rewarded.Reward;
+import com.yandex.mobile.ads.rewarded.RewardedAd;
+import com.yandex.mobile.ads.rewarded.RewardedAdEventListener;
 
 import java.io.File;
 
@@ -50,7 +47,8 @@ import es.dmoral.toasty.Toasty;
 
 public class MainActivity extends AppCompatActivity implements MainContract.View {
 
-    private static final String PACKAGE_NAME = "com.gukov.pickrhyme";
+    private final String TAG = "ADS";
+
     private static final int RC_LEADERBOARD_UI = 9004; // код запроса для вызова таблицы лидеров
     private static final int RC_SIGN_IN = 9001; // код запроса для вызова взаимодействия с пользователем
 
@@ -59,11 +57,10 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
     private SharedPreferencesManager sPrefManager;
     private GoogleAccountManager googleAccountManager;
     private FirebaseManager firebaseManager;
-    private RewardedAd mRewardedAd; // реклама с вознаграждением
+    private RewardedAd yandexRewardedAd; // реклама с вознаграждением
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -90,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         binding.btnSignOut.setOnClickListener(v -> presenter.onSignOutClicked());
         binding.tvBuyFullApp.setOnClickListener(v -> presenter.onBuyFullAppClicked());
         binding.tvAbout.setOnClickListener(v -> presenter.openAboutAppClicked());
-        binding.tvPrivacyPolicy.setOnClickListener(v -> presenter.linkPrivacyPolicyClicked());
+
     }
 
     private void migratingToNewVersion() {
@@ -160,40 +157,31 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void viewAdsForHint() {
-        if (mRewardedAd != null) {
-            mRewardedAd.show(this, rewardItem -> {
-                // здесь происходит возаграждение
-                presenter.upUserHintsForViewAds();
-                showToastInfo("Ура! Вы заработали одну подсказку, теперь у Вас их: " + sPrefManager.getUserHints());
-                mRewardedAd = null;
-            });
-        } else
-            showToastInfo("Ищем рекламу... Подождите несколько секунд и повторите попытку");
+        initAdsRewarded();
     }
 
     @Override
     public void openSuggestRhyme() {
-        SuggestRhymeFragment fragment = new SuggestRhymeFragment();
-        fragment.show(getSupportFragmentManager(), "dialogSuggestRhyme");
+        SuggestRhymeDialog dialog = new SuggestRhymeDialog();
+        dialog.show(getSupportFragmentManager(), "BottomSheetDialogSuggestRhyme");
     }
 
     @Override
     public void onResetGame() {
-        AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-        dialog.setTitle(getString(R.string.are_you_sure));
-        if (googleAccountManager.isSignedIn())
-            dialog.setMessage(getString(R.string.go_to_play_game_for_reset_game_online));
-        else
-            dialog.setMessage(getString(R.string.go_to_play_game_for_reset_game));
-        dialog.setPositiveButton(getString(R.string.reset), (d, which) -> {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_reset, null);
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this, R.style.BottomSheetDialogTheme);
+
+        view.findViewById(R.id.btn_allRhymes).setOnClickListener(view12 -> {
             firebaseManager.clearData();
             sPrefManager.clearAll();
             presenter.loadSavedData();
-            d.dismiss();
-        })
-                .setNegativeButton(getString(R.string.cancel), (d, id) -> d.cancel());
-        dialog.create();
-        dialog.show();
+            bottomSheetDialog.dismiss();
+        });
+
+        view.findViewById(R.id.btn_cancel).setOnClickListener(view1 -> bottomSheetDialog.cancel());
+
+        bottomSheetDialog.setContentView(view);
+        bottomSheetDialog.show();
     }
 
     @Override
@@ -205,19 +193,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     @Override
     public void onBuyFullApp() {
-        BuyFullFragment fragment = new BuyFullFragment();
-        fragment.show(getSupportFragmentManager(), "dialogBuyFull");
+        BuyFullDialog dialog = new BuyFullDialog();
+        dialog.show(getSupportFragmentManager(), "BottomSheetDialogBuyFull");
     }
 
     @Override
     public void openAboutApp() {
-        AboutFragment fragment = new AboutFragment();
-        fragment.show(getSupportFragmentManager(), "dialogAbout");
-    }
-
-    @Override
-    public void linkPrivacyPolicy() {
-        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.privacy_policy_link))));
+        AboutDialog dialog = new AboutDialog();
+        dialog.show(getSupportFragmentManager(), "DialogAbout");
     }
 
     @Override
@@ -272,38 +255,63 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
 
     // инициализация рекламы с вознаграждением в приложении
     public void initAdsRewarded() {
-        AdRequest adRequest = new AdRequest.Builder().build();
-        RewardedAd.load(this, getString(R.string.rewarded_ad_unit_id), adRequest, new RewardedAdLoadCallback() {
+        yandexRewardedAd = new RewardedAd(this);
+        yandexRewardedAd.setAdUnitId(getString(R.string.ads_yandex_rewardedAd_unitId));
+        final AdRequest adRequest = new AdRequest.Builder().build();
+        yandexRewardedAd.setRewardedAdEventListener(new RewardedAdEventListener() {
             @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                Log.d("RewardedAd", loadAdError.getMessage()); // ошибка инициализации
-                mRewardedAd = null;
+            public void onAdLoaded() {
+                Log.d(TAG, "Yandex: onAdLoaded");
+                yandexRewardedAd.show();
             }
 
             @Override
-            public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-                mRewardedAd = rewardedAd;
-                mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        Log.d("RewardedAd", "Ad was shown."); // вызывается при показе объявления
-                        mRewardedAd = null;
-                    }
+            public void onAdFailedToLoad(@NonNull AdRequestError adRequestError) {
+                Log.d(TAG, "Yandex (onAdFailedToLoad): " + adRequestError.getDescription());
+                showToastInfo("Ищем рекламу... Подождите несколько секунд и повторите попытку");
+                yandexRewardedAd = null;
+            }
 
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        Log.d("RewardedAd", "Ad failed to show."); // вызывается, когда объявление не отображается
-                    }
+            @Override
+            public void onAdShown() {
+                Log.d(TAG, "Yandex: onAdShown");
+            }
 
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        // вызывается, когда объявление отклоняется. Установить значение null, чтобы не показывать объявление во второй раз
-                        Log.d("RewardedAd", "Ad was dismissed.");
-                        mRewardedAd = null;
-                    }
-                });
+            @Override
+            public void onAdDismissed() {
+                Log.d(TAG, "Yandex: onAdDismissed");
+                yandexRewardedAd = null;
+            }
+
+            @Override
+            public void onRewarded(@NonNull Reward reward) {
+                Log.d(TAG, "Yandex: onRewarded");
+                // здесь происходит возаграждение
+                presenter.upUserHintsForViewAds();
+                showToastInfo("Ура! Вы заработали одну подсказку, теперь у вас их: " + sPrefManager.getUserHints());
+            }
+
+            @Override
+            public void onAdClicked() {
+                Log.d(TAG, "Yandex: onAdClicked");
+            }
+
+            @Override
+            public void onLeftApplication() {
+                Log.d(TAG, "Yandex: onLeftApplication");
+            }
+
+            @Override
+            public void onReturnedToApplication() {
+                Log.d(TAG, "Yandex: onReturnedToApplication");
+            }
+
+            @Override
+            public void onImpression(@Nullable ImpressionData impressionData) {
+                Log.d(TAG, "Yandex: onImpression");
             }
         });
+        yandexRewardedAd.loadAd(adRequest);
     }
 
     @Override
@@ -313,7 +321,6 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         presenter.loadSavedData();
         firebaseManager.checkDataCloudFirestore();
         presenter.loadSavedData();
-        initAdsRewarded(); // инициализация рекламы с вознаграждением в приложении
     }
 
     @Override

@@ -1,14 +1,13 @@
 package com.gukov.pickrhyme.game_view;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
@@ -16,24 +15,26 @@ import com.google.android.flexbox.FlexDirection;
 import com.google.android.flexbox.FlexWrap;
 import com.google.android.flexbox.FlexboxLayoutManager;
 import com.google.android.flexbox.JustifyContent;
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
 import com.google.android.play.core.tasks.Task;
-import com.gukov.pickrhyme.FirebaseManager;
 import com.gukov.pickrhyme.R;
-import com.gukov.pickrhyme.SharedPreferencesManager;
 import com.gukov.pickrhyme.adapter.WordAdapter;
 import com.gukov.pickrhyme.databinding.ActivityGameBinding;
-import com.gukov.pickrhyme.fragment.HelpByPushkinFragment;
+import com.gukov.pickrhyme.dialog.HelpByPushkinDialog;
 import com.gukov.pickrhyme.model.Model;
 import com.gukov.pickrhyme.object.Word;
+import com.gukov.pickrhyme.util.FirebaseManager;
+import com.gukov.pickrhyme.util.SharedPreferencesManager;
+import com.yandex.mobile.ads.banner.AdSize;
+import com.yandex.mobile.ads.banner.BannerAdEventListener;
+import com.yandex.mobile.ads.common.AdRequest;
+import com.yandex.mobile.ads.common.AdRequestError;
+import com.yandex.mobile.ads.common.ImpressionData;
+import com.yandex.mobile.ads.interstitial.InterstitialAd;
+import com.yandex.mobile.ads.interstitial.InterstitialAdEventListener;
 
 import java.util.List;
 
@@ -41,11 +42,13 @@ import es.dmoral.toasty.Toasty;
 
 public class GameActivity extends AppCompatActivity implements GameContract.View {
 
+    private final String TAG = "ADS";
+
     private ActivityGameBinding binding;
     private GameContract.Presenter presenter;
     private SharedPreferencesManager sPrefManager;
     private FirebaseManager firebaseManager;
-    private InterstitialAd interstitialAd; // межстраничная реклама
+    private InterstitialAd yandexInterstitialAd; // межстраничная реклама Yandex
     private int level = 1; // уровень игры
     private String mode = "game"; // режим игры
 
@@ -75,10 +78,13 @@ public class GameActivity extends AppCompatActivity implements GameContract.View
 
         presenter.loadSavedData(level);
 
-        initAndShowAdsBanner(); // инициализация и показ баннерной рекламы
-        initAdsInterstitial(); // инициализация межстраничной рекламы в приложении
-        if (sPrefManager.getAppIsFullVersion())
-            binding.adView.setVisibility(View.GONE);
+        //initAndShowAdsBanner(); // инициализация и показ баннерной рекламы
+        //initYandexAdsInterstitial(); // инициализация межстраничной рекламы Yandex в приложении
+        if (!sPrefManager.getIsFullVersion()) {
+            binding.bannerAdViewYandex.setAdUnitId(getString(R.string.ads_yandex_bannerAd_unitId));
+            binding.bannerAdViewYandex.setAdSize(AdSize.stickySize(getResources().getDisplayMetrics().widthPixels));
+            initAndShowAdsBanner();
+        }
 
         binding.imgHelp.setOnClickListener(v -> presenter.onHelpByPushkin());
         binding.imgAdd.setOnClickListener(v -> {
@@ -86,7 +92,7 @@ public class GameActivity extends AppCompatActivity implements GameContract.View
             binding.etEnter.setText("");
         });
 
-        if (!sPrefManager.getAppIsFullVersion() && mode.equals("training"))
+        if (!sPrefManager.getIsFullVersion() && mode.equals("training"))
             showAdsInterstitial();
 
         requestReview();
@@ -144,35 +150,33 @@ public class GameActivity extends AppCompatActivity implements GameContract.View
     public void showWord(String value) {
         binding.tvWord.setText(value);
         if (value.equals("..."))
-            showFinalGameAlertDialog();
+            showGameEndDialog();
     }
 
     // показываем финальное диалоговое окно, если проходим все уровни игры
     @Override
-    public void showFinalGameAlertDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.final_level))
-                .setMessage(getString(R.string.final_level_detail))
-                .setCancelable(false)
-                .setNegativeButton(getString(R.string.save_and_exit),
-                        (dialog, id) -> {
-                            dialog.cancel();
-                            setResult(RESULT_OK, new Intent());
-                            presenter.saveResult();
-                            finish();
-                        });
-        AlertDialog alert = builder.create();
-        alert.show();
+    public void showGameEndDialog() {
+        BottomSheetDialog dialog = new BottomSheetDialog(this, R.style.BottomSheetDialogTheme);
+        dialog.setContentView(R.layout.dialog_game_end);
+        dialog.setCancelable(false);
+
+        Button ok = dialog.findViewById(R.id.btn_allRhymes);
+        ok.setOnClickListener(view -> {
+            presenter.saveResult();
+            finish();
+        });
+
+        dialog.show();
     }
 
     // показываем диалоговое окно, если просим помощи у Пушкина
     @Override
-    public void showHelpByPushkinAlertDialog(int level) {
-        HelpByPushkinFragment fragment = new HelpByPushkinFragment();
+    public void showHelpByPushkinDialog(int level) {
+        HelpByPushkinDialog dialog = new HelpByPushkinDialog();
         Bundle bundle = new Bundle();
         bundle.putInt("level", level);
-        fragment.setArguments(bundle);
-        fragment.show(getSupportFragmentManager(), "dialogHelpByPushkin");
+        dialog.setArguments(bundle);
+        dialog.show(getSupportFragmentManager(), "BottomSheetDialogHelpByPushkin");
     }
 
     @Override
@@ -205,70 +209,109 @@ public class GameActivity extends AppCompatActivity implements GameContract.View
         Toasty.warning(this, message, Toast.LENGTH_SHORT, false).show();
     }
 
-    // показ баннерной рекламы
+    // показ баннерной рекламы Yandex
     void initAndShowAdsBanner() {
-        AdRequest request = new AdRequest.Builder().build();
-        binding.adView.loadAd(request);
+        final AdRequest adRequest = new AdRequest.Builder().build();
+        binding.bannerAdViewYandex.setBannerAdEventListener(new BannerAdEventListener() {
+            @Override
+            public void onAdLoaded() {
+
+            }
+
+            @Override
+            public void onAdFailedToLoad(@NonNull AdRequestError adRequestError) {
+                initAndShowAdsBanner();
+            }
+
+            @Override
+            public void onAdClicked() {
+
+            }
+
+            @Override
+            public void onLeftApplication() {
+
+            }
+
+            @Override
+            public void onReturnedToApplication() {
+
+            }
+
+            @Override
+            public void onImpression(@Nullable ImpressionData impressionData) {
+
+            }
+        });
+        binding.bannerAdViewYandex.loadAd(adRequest);
     }
 
     // показ межстраничной рекламы в приложении
     @Override
     public void showAdsInterstitial() {
-        if (interstitialAd != null)
-            interstitialAd.show(this);
-        else
-            Log.d("InterstitialAd", "The interstitial ad wasn't ready yet.");
+        initYandexAdsInterstitial();
+//        if (yandexInterstitialAd != null && yandexInterstitialAd.isLoaded())
+//            yandexInterstitialAd.show();
+//        else
+//            Log.d(TAG, "Yandex: The interstitial ad wasn't ready yet.");
     }
 
-    // инициализация межстраничной рекламы в приложении
-    private void initAdsInterstitial() {
-        AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(this, getString(R.string.interstitial_ad_unit_id), adRequest, new InterstitialAdLoadCallback() {
+    // инициализация межстраничной рекламы Яндекс в приложении
+    private void initYandexAdsInterstitial() {
+        yandexInterstitialAd = new InterstitialAd(this);
+        yandexInterstitialAd.setAdUnitId(getString(R.string.ads_yandex_interstitialAd_unitId));
+        yandexInterstitialAd.loadAd(new AdRequest.Builder().build());
+        yandexInterstitialAd.setInterstitialAdEventListener(new InterstitialAdEventListener() {
             @Override
-            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                // ссылка mInterstitialAd будет равна нулю до тех пор, пока не будет загружено объявление
-                Log.d("InterstitialAd", "onAdLoaded");
-                GameActivity.this.interstitialAd = interstitialAd;
-                interstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        // вызывается при отклонении полноэкранного содержимого. Установить значение null, чтобы не показывать ее во второй раз
-                        Log.d("InterstitialAd", "The ad was dismissed.");
-                        GameActivity.this.interstitialAd = null;
-                    }
-
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                        // вызывается, когда содержимое полноэкранного режима не отображается. Установить значение null, чтобы не показывать ее во второй раз
-                        Log.d("InterstitialAd", "The ad failed to show.");
-                        GameActivity.this.interstitialAd = null;
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        Log.d("InterstitialAd", "The ad was shown."); // вызывается при отображении полноэкранного содержимого
-                    }
-                });
+            public void onAdLoaded() {
+                Log.d(TAG, "Yandex: onAdLoaded");
+                yandexInterstitialAd.show();
             }
 
             @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                Log.d("InterstitialAd", loadAdError.getMessage()); // ошибка инициализации
-                interstitialAd = null;
+            public void onAdFailedToLoad(@NonNull AdRequestError adRequestError) {
+                Log.d(TAG, "Yandex (onAdFailedToLoad): " + adRequestError.getDescription());
+                yandexInterstitialAd = null;
+                initYandexAdsInterstitial();
+            }
+
+            @Override
+            public void onAdShown() {
+                Log.d(TAG, "Yandex: onAdShown");
+            }
+
+            @Override
+            public void onAdDismissed() {
+                Log.d(TAG, "Yandex: onAdDismissed");
+                yandexInterstitialAd = null;
+            }
+
+            @Override
+            public void onAdClicked() {
+                Log.d(TAG, "Yandex: onAdClicked");
+            }
+
+            @Override
+            public void onLeftApplication() {
+                Log.d(TAG, "Yandex: onLeftApplication");
+            }
+
+            @Override
+            public void onReturnedToApplication() {
+                Log.d(TAG, "Yandex: onReturnedToApplication");
+            }
+
+            @Override
+            public void onImpression(@Nullable ImpressionData impressionData) {
+                Log.d(TAG, "Yandex: onImpression");
             }
         });
-    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        binding.adView.resume();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        binding.adView.pause();
         if (mode.equals("game"))
             presenter.saveResult();
         if (mode.equals("training"))
@@ -279,6 +322,6 @@ public class GameActivity extends AppCompatActivity implements GameContract.View
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        binding.adView.destroy();
+        binding.bannerAdViewYandex.destroy();
     }
 }

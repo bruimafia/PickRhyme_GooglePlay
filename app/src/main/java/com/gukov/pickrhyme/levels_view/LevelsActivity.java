@@ -9,13 +9,14 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.gukov.pickrhyme.R;
-import com.gukov.pickrhyme.SharedPreferencesManager;
 import com.gukov.pickrhyme.adapter.LevelAdapter;
 import com.gukov.pickrhyme.databinding.ActivityLevelsBinding;
+import com.gukov.pickrhyme.dialog.AllRhymesDialog;
 import com.gukov.pickrhyme.game_view.GameActivity;
 import com.gukov.pickrhyme.model.Model;
 import com.gukov.pickrhyme.model.ModelInterface;
 import com.gukov.pickrhyme.object.Word;
+import com.gukov.pickrhyme.util.SharedPreferencesManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,11 +66,25 @@ public class LevelsActivity extends AppCompatActivity {
                 intent.putExtra("level", word.getId());
                 intent.putExtra("mode", "training");
                 startActivity(intent);
-            }
-            else if (word.getId() == currentLevel)
+            } else if (word.getId() == currentLevel)
                 Toasty.error(this, getString(R.string.complete_this_level_first), Toast.LENGTH_SHORT, false).show();
             else
-                Toasty.error(this, getString(R.string.access_is_closed), Toast.LENGTH_SHORT, false).show();
+                Toasty.error(this, getString(R.string.access_closed), Toast.LENGTH_SHORT, false).show();
+        });
+
+        adapter.setOnAllRhymesClickListener(position -> {
+            Word word = adapter.getWords().get(position);
+            if (word.getId() < currentLevel) {
+                AllRhymesDialog dialog = new AllRhymesDialog();
+                Bundle bundle = new Bundle();
+                bundle.putInt("level", word.getId());
+                dialog.setArguments(bundle);
+                dialog.show(getSupportFragmentManager(), "BottomSheetDialogAllRhymes");
+
+            } else if (word.getId() == currentLevel)
+                Toasty.error(this, getString(R.string.complete_this_level_first), Toast.LENGTH_SHORT, false).show();
+            else
+                Toasty.error(this, getString(R.string.access_closed), Toast.LENGTH_SHORT, false).show();
         });
     }
 

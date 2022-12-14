@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".game_view.GameActivity">
 
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/cl_header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimaryDark"
+        android:background="@color/colorPrimary"
         android:paddingTop="@dimen/_12sdp"
         android:paddingBottom="@dimen/_8sdp">
 
@@ -91,7 +89,7 @@
                     android:gravity="center"
                     android:text="@string/pick_rhyme_for_the_word"
                     android:textColor="@color/grey_400"
-                    android:textSize="@dimen/_10sdp" />
+                    android:textSize="@dimen/_11ssp" />
 
                 <TextView
                     android:id="@+id/tv_word"
@@ -100,7 +98,7 @@
                     android:layout_below="@id/tv_info"
                     android:gravity="center"
                     android:textColor="@color/colorPrimary"
-                    android:textSize="@dimen/_28sdp"
+                    android:textSize="@dimen/_29ssp"
                     android:textStyle="bold"
                     tools:text="электрошок" />
 
@@ -112,6 +110,7 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginTop="-10dp"
                     android:layout_marginBottom="-5dp"
+                    android:contentDescription="@string/help_by_pushkin"
                     app:srcCompat="@drawable/pushkin" />
 
             </RelativeLayout>
@@ -120,85 +119,87 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/ll_words"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nsv_words"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/cl_header"
-        android:orientation="vertical"
-        android:paddingStart="@dimen/_8sdp"
-        android:paddingTop="@dimen/_8sdp"
-        android:paddingEnd="@dimen/_8sdp"
-        android:paddingBottom="@dimen/_8sdp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/you_picked_up_these_rhymes"
-            android:textColor="@color/grey_600"
-            android:textSize="@dimen/_16sdp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/tv_pointsForNextLevel"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:gravity="center"
-            android:textColor="@color/grey_500"
-            android:textSize="@dimen/_10sdp"
-            tools:text="@string/number_words_for_next_level" />
-
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="@dimen/_10sdp"
-            ads:adSize="BANNER"
-            ads:adUnitId="@string/banner_ad_unit_id" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_rhymes"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
-            android:overScrollMode="never"
-            android:paddingBottom="?attr/actionBarSize"
-            tools:listitem="@layout/word" />
+        android:layout_below="@id/cl_header">
 
         <LinearLayout
-            android:id="@+id/ll_noWords"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/cl_header"
             android:orientation="vertical"
-            android:paddingTop="@dimen/_30sdp"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="@dimen/_80sdp"
-                android:layout_height="@dimen/_80sdp"
-                android:layout_gravity="center"
-                android:layout_weight="0"
-                app:srcCompat="@drawable/sad" />
+            android:padding="@dimen/_8sdp">
 
             <TextView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:gravity="center"
-                android:padding="@dimen/_10sdp"
-                android:text="@string/you_did_not_pick_up_any_rhymes"
+                android:text="@string/you_picked_up_these_rhymes"
                 android:textColor="@color/grey_500"
-                android:textSize="@dimen/_14sdp" />
+                android:textSize="@dimen/_16ssp"
+                android:textStyle="bold" />
 
+            <TextView
+                android:id="@+id/tv_pointsForNextLevel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/_10sdp"
+                android:gravity="center"
+                android:textColor="@color/grey_400"
+                android:textSize="@dimen/_10ssp"
+                tools:text="@string/number_words_for_next_level" />
+
+            <com.yandex.mobile.ads.banner.BannerAdView
+                android:id="@+id/banner_ad_view_yandex"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_5sdp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_rhymes"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_8sdp"
+                android:nestedScrollingEnabled="false"
+                android:overScrollMode="never"
+                android:paddingBottom="?attr/actionBarSize"
+                tools:listitem="@layout/word" />
+
+            <LinearLayout
+                android:id="@+id/ll_noWords"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ImageView
+                    android:layout_width="@dimen/_80sdp"
+                    android:layout_height="@dimen/_80sdp"
+                    android:layout_gravity="center"
+                    android:layout_weight="0"
+                    app:srcCompat="@drawable/sad" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:padding="@dimen/_10sdp"
+                    android:text="@string/you_did_not_pick_up_any_rhymes"
+                    android:textColor="@color/grey_500"
+                    android:textSize="@dimen/_14ssp" />
+
+            </LinearLayout>
 
         </LinearLayout>
 
-
-    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -208,7 +209,7 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:layout_alignParentBottom="true"
-            android:background="@color/grey_50"
+            android:background="@color/background"
             android:orientation="horizontal">
 
             <View
@@ -221,10 +222,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/v_view"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
                 android:orientation="horizontal">
 
-
-                <EditText
+                <androidx.appcompat.widget.AppCompatEditText
                     android:id="@+id/et_enter"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -233,9 +235,10 @@
                     android:ems="10"
                     android:hint="@string/enter_rhyme"
                     android:inputType="textPersonName"
-                    android:paddingStart="@dimen/_8sdp"
-                    android:paddingEnd="@dimen/_8sdp"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:paddingEnd="@dimen/_10sdp"
                     android:textColor="@color/grey_800"
+                    app:backgroundTint="@color/colorAccent"
                     tools:text="@tools:sample/cities" />
 
                 <ImageView
@@ -243,9 +246,9 @@
                     android:layout_width="@dimen/_35sdp"
                     android:layout_height="@dimen/_35sdp"
                     android:layout_gravity="center"
-                    android:layout_marginEnd="@dimen/_5sdp"
                     android:layout_weight="0"
                     android:contentDescription="@string/add_rhyme"
+                    android:padding="@dimen/_5sdp"
                     app:srcCompat="@drawable/ic_add" />
 
             </LinearLayout>

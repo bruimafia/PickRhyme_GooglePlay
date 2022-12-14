@@ -13,7 +13,6 @@ import java.util.List;
 
 public class Model implements ModelInterface {
 
-
     private Context context;
     private SQLiteDatabase database;
 
@@ -69,7 +68,7 @@ public class Model implements ModelInterface {
         return list;
     }
 
-    // полчение случайной рифмы из базы данных
+    // получение случайной рифмы из базы данных
     @Override
     public String getRandomRhymeFromDatabase(int level, List<Word> userRhymes) {
         List<Word> list = getRhymesFromDatabase(level);
