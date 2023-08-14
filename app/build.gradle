@@ -16,8 +16,8 @@ android {
         applicationId 'com.gukov.pickrhyme'
         minSdkVersion 19
         targetSdkVersion 33
-        versionCode 39
-        versionName "3.3"
+        versionCode 40
+        versionName "3.3.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
@@ -47,7 +47,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.5.1'
-    implementation 'com.google.android.material:material:1.8.0-alpha03'
+    implementation 'com.google.android.material:material:1.8.0-beta01'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
     implementation 'androidx.browser:browser:1.4.0'
@@ -75,7 +75,7 @@ dependencies {
     // Библиотека Play Install Referrer (Опционально)
 
     // Yandex Mobile Ads
-    implementation 'com.yandex.android:mobileads:5.4.1'
+    implementation 'com.yandex.android:mobileads:5.5.0'
     implementation 'com.yandex.ads.mediation:mobileads-admob:21.3.0.0'
 
     // Модернизированные всплывающие уведомления
@@ -105,10 +105,10 @@ dependencies {
 
     // Firebase AdMob Google Mobile Ads SDK
     // Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:31.1.0')
+    implementation platform('com.google.firebase:firebase-bom:31.1.1')
     implementation 'com.google.firebase:firebase-core:21.1.1' // Firebase SDK
     implementation 'com.google.android.gms:play-services-ads' // Google Mobile Ads SDK
-    implementation 'com.google.firebase:firebase-ads:21.3.0' // AdMob Google Mobile Ads SDK
+    implementation 'com.google.firebase:firebase-ads:21.4.0' // AdMob Google Mobile Ads SDK
     implementation 'com.google.firebase:firebase-firestore' // Firebase Cloud Firestore
     implementation 'com.google.firebase:firebase-messaging' // Firebase Cloud Messaging
     implementation 'com.google.firebase:firebase-analytics' // Firebase Google Analytics

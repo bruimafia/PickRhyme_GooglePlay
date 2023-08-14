@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -85,9 +87,11 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         binding.btnSuggestRhyme.setOnClickListener(v -> presenter.openSuggestRhymeClicked());
         binding.btnReset.setOnClickListener(v -> presenter.onResetGameClicked());
         binding.btnSignOut.setOnClickListener(v -> presenter.onSignOutClicked());
+        binding.clPickSynonymLink.setOnClickListener(v -> presenter.onPickSynonymLinkClicked());
         binding.tvBuyFullApp.setOnClickListener(v -> presenter.onBuyFullAppClicked());
         binding.tvAbout.setOnClickListener(v -> presenter.openAboutAppClicked());
 
+        isPickSynonymInstalled();
     }
 
     private void migratingToNewVersion() {
@@ -189,6 +193,11 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
         if (googleAccountManager.isSignedIn())
             googleAccountManager.signOut();
         presenter.loadSavedData();
+    }
+
+    @Override
+    public void onPickSynonymLink() {
+        startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=ru.bruimafia.picksynonym")));
     }
 
     @Override
@@ -353,5 +362,14 @@ public class MainActivity extends AppCompatActivity implements MainContract.View
                 }
             }
         });
+    }
+
+    // проверка установки Подбери синоним
+    public void isPickSynonymInstalled() {
+        try {
+            getApplicationContext().getPackageManager().getApplicationInfo("ru.bruimafia.picksynonym", 0);
+            binding.clPickSynonymLink.setVisibility(View.GONE);
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
     }
 }

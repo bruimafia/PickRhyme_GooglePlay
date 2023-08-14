@@ -78,6 +78,11 @@ public class MainPresenter implements MainContract.Presenter {
     }
 
     @Override
+    public void onPickSynonymLinkClicked() {
+        view.onPickSynonymLink();
+    }
+
+    @Override
     public void onBuyFullAppClicked() {
         view.onBuyFullApp();
     }

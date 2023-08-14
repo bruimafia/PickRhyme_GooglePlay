@@ -30,6 +30,8 @@ public interface MainContract {
 
         void onSignOut(); // выйти из аккаунта
 
+        void onPickSynonymLink(); // перейти на игру Подбери синоним
+
         void onBuyFullApp(); // купить полную версию
 
         void openAboutApp(); // открыть окно о приложении
@@ -65,6 +67,8 @@ public interface MainContract {
         void onResetGameClicked(); // кнопка сбросить результаты
 
         void onSignOutClicked(); // кнопка выйти из аккаунта
+
+        void onPickSynonymLinkClicked(); // кнопка перехода на игру Подбери синоним
 
         void onBuyFullAppClicked(); // кнопка купить полную версию
 

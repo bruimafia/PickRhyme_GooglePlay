@@ -6,6 +6,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.android.vending.BILLING" />
 
+    <queries>
+        <package android:name="ru.bruimafia.picksynonym" />
+    </queries>
+
     <application
         android:name=".AppClass"
         android:allowBackup="true"
